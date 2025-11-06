@@ -1,9 +1,8 @@
 import pandas as pd
 from core.load_data import load_or_update
 
-
-def moving_average_crossover(data: pd.DataFrame, short=20, long=50) -> pd.DataFrame:
-    """Original function (kept for reuse in CLI/backtesting)."""
+def moving_average_crossover(data: pd.DataFrame, short: int = 20, long: int = 50) -> pd.DataFrame:
+    """Compute moving average crossovers with variable windows."""
     df = data.copy()
     df["Close"] = df["4. close"].astype(float)
     df["SMA_short"] = df["Close"].rolling(window=short).mean()
@@ -13,13 +12,11 @@ def moving_average_crossover(data: pd.DataFrame, short=20, long=50) -> pd.DataFr
     df.loc[df["SMA_short"] < df["SMA_long"], "Signal"] = -1
     return df
 
-
-def run(ticker: str, return_data: bool = False):
-    """Wrapper for GUI/CLI menu integration."""
+def run(ticker: str, return_data: bool = False, short: int = 20, long: int = 50):
+    """Wrapper for GUI/CLI use with variable SMA windows."""
     df = load_or_update(ticker)
-    df = moving_average_crossover(df)
+    df = moving_average_crossover(df, short, long)
 
-    # Translate last signal into bullish/bearish/hold
     last_signal = df["Signal"].iloc[-1]
     if last_signal == 1:
         signal = "bullish"

@@ -1,9 +1,6 @@
 import pandas as pd
 from core.load_data import load_or_update
 
-"""
-RSI indexing for 10 day frames
-"""
 def relative_strength_index(data: pd.DataFrame, period: int = 10) -> pd.DataFrame:
     df = data.copy()
     delta = df['4. close'].diff()
@@ -13,10 +10,10 @@ def relative_strength_index(data: pd.DataFrame, period: int = 10) -> pd.DataFram
     df['RSI'] = 100 - (100 / (1 + rs))
     return df
 
-def run(ticker: str, return_data: bool = False):
-    """Wrapper for GUI/CLI use."""
+def run(ticker: str, return_data: bool = False, period: int = 10):
+    """Wrapper for GUI/CLI use with adjustable period."""
     df = load_or_update(ticker)
-    df = relative_strength_index(df)
+    df = relative_strength_index(df, period)
 
     last_rsi = df["RSI"].iloc[-1]
     if last_rsi > 70:
